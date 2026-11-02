@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'TARGET_HOST', defaultValue: '', description: 'Ubuntu server IP')
+        string(name: 'TARGET_HOST', defaultValue: '172.17.24.131', description: 'Ubuntu server IP')
     }
 
     stages {
