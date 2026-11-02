@@ -1,0 +1,50 @@
+---
+- name: Deploy web application
+  hosts: webservers
+  become: true
+
+  tasks:
+    - name: Create application directory
+      ansible.builtin.file:
+        path: /var/www/myapp
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Deploy application files
+      ansible.builtin.copy:
+        src: ../app/index.html
+        dest: /var/www/myapp/index.html
+        owner: www-data
+        group: www-data
+        mode: '0644'
+
+    - name: Configure Nginx site
+      ansible.builtin.copy:
+        dest: /etc/nginx/sites-available/myapp
+        content: |
+          server {
+              listen 8086;
+              server_name _;
+              root /var/www/myapp;
+              index index.html;
+
+              location / {
+                  try_files $uri $uri/ =404;
+              }
+          }
+      notify: Reload Nginx
+
+    - name: Enable Nginx site
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/myapp
+        dest: /etc/nginx/sites-enabled/myapp
+        state: link
+      notify: Reload Nginx
+
+  handlers:
+    - name: Reload Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded

@@ -1,0 +1,10 @@
+inventory/hosts.ini
+inventory/jenkins-hosts.ini
+.ansible_become_pass
+*.pem
+*.key
+.env
+.env.*
+credentials*
+secrets*
+*.retry
